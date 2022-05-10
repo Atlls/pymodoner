@@ -1,0 +1,14 @@
+{
+    "pomodoros" : {
+        "classic" : {
+            "working": 69,
+            "warning": 0,
+            "break": 0,
+            "long_break": 0
+        },
+        "retro": {
+            "working": 0,
+            "break": 0
+        }
+    }
+}
