@@ -3,7 +3,6 @@ import ui
 def menu():
 
     configs = ui.read_json()
-    configs = dict(configs['pomos']['classic'].items())
 
     while True:
 
@@ -19,10 +18,27 @@ def menu():
         if   'q' in option:
             break
         elif 's' in option:
-            run(configs['working'])
+            run(configs["pomos"]["classic"]['working'])
         elif 'c' in option:
-            # Configation of json
-            break
+            config_menu(configs)
+
+# ui?
+def config_menu(configs):
+
+    configs_classic = configs["pomos"]["classic"]
+    for config_name in configs_classic.keys():
+
+        ui.clear()
+
+        print(" of",config_name.capitalize() + "'s time")
+        print(" current is:", configs_classic[config_name],"minutes")
+        print(" number. to Set new value")
+        print(" Enter.  to Skip")
+        new_config = ui.get_input()
+        if new_config:
+            configs_classic[config_name] = new_config
+
+    ui.write_json(configs)
 
 
 def run(interval):
