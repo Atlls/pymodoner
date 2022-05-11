@@ -10,7 +10,7 @@ def menu():
         ui.clear()
 
         ui.read_json()
-        print("Pymodoner in development 0.0.2")
+        print("Pymodoner in development 0.0.3")
         print("Menu")
         print("c. Classic Pomodoro")
         print("r. Retro Pomodoro")
