@@ -7,9 +7,8 @@ def menu():
     while True:
 
         ui.clear()
-        print(configs)
         print("Classic Pomodoro timer")
-        print("Menu")
+        print("")
         print("s. to Start session")
         print("c. to Configure the intervals")
         print("q. to Back last menu ")
@@ -18,7 +17,7 @@ def menu():
         if   'q' in option:
             break
         elif 's' in option:
-            run(configs["pomos"]["classic"]['working'])
+            run_sequense(configs)
         elif 'c' in option:
             config_menu(configs)
 
@@ -40,17 +39,28 @@ def config_menu(configs):
 
     ui.write_json(configs)
 
+def run_sequense(configs):
+    working, warning, shortbreak, longbreak \
+    = configs["pomos"]["classic"].values()
 
-def run(interval):
+    start_count(working)
+
+def start_count(interval,warning = 0):
+    import keyboard # Requiere sudo
     from time import sleep
     from datetime import timedelta
 
     time_finish = timedelta(minutes=interval)
 
     while  time_finish.total_seconds() > 0:
-
         ui.clear()
         time_finish -= timedelta(seconds=1)
+
         print(str(time_finish)[2:7])
+        print("q. to Go Classic's menu")
+
+        event = keyboard.read_event()
+
+        if 'q' in event.name:
+            break
         sleep(1)
-        ui.clear()
