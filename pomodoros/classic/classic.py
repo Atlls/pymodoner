@@ -1,4 +1,5 @@
 import ui
+import app
 
 def menu():
 
@@ -7,11 +8,11 @@ def menu():
     while True:
 
         ui.clear()
-        print("Classic Pomodoro timer")
-        print("")
+        ui.print_position('Classic Mode Pomodoro Timer','center')
+        ui.print_br()
         print("s. to Start session")
         print("c. to Configure the intervals")
-        print("q. to Back last menu ")
+        print("q. to Back main menu ")
         option = input(" > ")
 
         if   'q' in option:
@@ -29,11 +30,15 @@ def config_menu(configs):
 
         ui.clear()
 
-        print(" of",config_name.capitalize() + "'s time")
-        print(" current is:", configs_classic[config_name],"minutes")
-        print(" number. to Set new value")
+        ui.print_position('Classic Mode Pomodoro Timer: Intervals Configuration','center')
+        ui.print_br()
+        print(' '+config_name.capitalize() + " time")
+        print(" Current is:", configs_classic[config_name],"minutes")
+        ui.print_br()
+        print(" number. to Set minutes")
         print(" Enter.  to Skip")
-        new_config = ui.get_input()
+
+        new_config = ui.get_input_number()
         if new_config:
             configs_classic[config_name] = new_config
 
@@ -41,26 +46,33 @@ def config_menu(configs):
 
 def run_sequense(configs):
     working, warning, shortbreak, longbreak \
-    = configs["pomos"]["classic"].values()
+    = configs["pomos"]["classic"].items()
 
     start_count(working)
 
 def start_count(interval,warning = 0):
-    import keyboard # Requiere sudo
     from time import sleep
     from datetime import timedelta
+    name_time, interval_time = interval
 
-    time_finish = timedelta(minutes=interval)
+    time_finish = timedelta(minutes=interval_time)
+    time_running = time_finish
 
-    while  time_finish.total_seconds() > 0:
+    while  time_running.total_seconds() > 0:
         ui.clear()
-        time_finish -= timedelta(seconds=1)
+        time_running -= timedelta(seconds=1)
 
-        print(str(time_finish)[2:7])
-        print("q. to Go Classic's menu")
+        ui.print_position('Classic Mode Pomodoro Timer: Running Session','center')
+        ui.print_br()
+        print('\n')
+        print(" in", name_time,"time...")
+        minutes = str(time_running)[2:7]
+        ui.print_position("- "+minutes+" -",'center')
+        porcentage_bar = (time_running.seconds+1) / time_finish.seconds * 100
+        #print(time_running.seconds,time_finish.seconds)
+        ui.print_position(ui.get_bar(20,int(porcentage_bar)),'center')
+        print('\n')
+        ui.print_br()
+        print("q. to Cancel session")
 
-        event = keyboard.read_event()
-
-        if 'q' in event.name:
-            break
         sleep(1)
