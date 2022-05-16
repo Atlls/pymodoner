@@ -1,8 +1,20 @@
 import keyboard # Requiere sudo
 
-def pulsa(tecla):
-    print('Se ha pulsado la tecla ' + str(tecla))
+def read_json():
+    import json
+    with open("configs/configs.json","r") as data_json:
+        return json.load(data_json)
 
-def get_event_keyboard():
-    if keyboard.read_key() == "p":
-        print("You pressed p")
+def write_json(data):
+    import json
+    with open("configs/configs.json","w") as outfile:
+        json.dump(data,outfile)
+
+
+def event_with(key):
+    import keyboard
+    try:
+        if keyboard.is_pressed(key): # This, Requiere sudo
+            return True
+    except:
+        return False
