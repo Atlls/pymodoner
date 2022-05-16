@@ -2,6 +2,24 @@ from os import system
 
 WIDTH = 80
 
+def print_clear_missings_inputs():
+    """
+        This make that user press Enter to depure all missings
+        input before couting pomodoro's process.
+
+        Doesn't work when are "Enter" character in the inputs buffer...
+    """
+    clear()
+
+    print('* *'+' '*(WIDTH-6)+'* *')
+    print('*'+' '*(WIDTH-2)+'*')
+    print('\n'*4)
+    print_position('Cleaning missings inputs.','center')
+    print_position('Please press Enter...','center')
+    print('\n'*3)
+    print('*'+' '*(WIDTH-2)+'*')
+    input('* *'+' '*(WIDTH-6)+'* *')
+
 def get_bar(bars,pors):
     """ Returna string with the bar """
     dones = '# ' * (bars * pors//100)

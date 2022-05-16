@@ -2,7 +2,7 @@
 
 import ui
 
-PROGRAM_VERSION = '0.0.4.5'
+PROGRAM_VERSION = '0.0.4.5.1'
 
 def run():
     menu()
@@ -15,7 +15,7 @@ def show_app_size():
     ui.print_position('Please, resize the terminal manually.', 'center')
     ui.print_position("Terminal's dimention should be 80x15.", 'center')
     ui.print_position('You can guide by the "*" in each corner.','center')
-    ui.print_position('Press any button to go back...','center')
+    ui.print_position('Press Enter to go back...','center')
     print('\n'*2)
     print('*'+' '*(ui.WIDTH-2)+'*')
     input('* *'+' '*(ui.WIDTH-6)+'* *')

@@ -61,6 +61,8 @@ def run_sequense(configs):
 
     start_count(working)
 
+    ui.print_clear_missings_inputs()
+
 def start_count(interval,warning=0):
     import datetime
     from time import sleep
@@ -82,22 +84,22 @@ def start_count(interval,warning=0):
         ui.print_position('Classic Mode Pomodoro Timer: Running Session','center')
         ui.print_br()
         print('\n')
-        print(" in", name_time,"time...")
+        print(" in", name_time.capitalize(),"time...")
         ui.print_position("- "+minutes+" -",'center')
         ui.print_position(ui.get_bar(20,int(porcentage_bar)),'center')
         print('\n')
         ui.print_br()
-        print(" q. to Cancel session")
-        print(" a. to Put 5 minutes more")
         print(" space. to Pause the timer")
+        print(" a. to Append 2 minutes at the timer")
+        print(" n. to Go to","*place holder*")
+        print(" q. to Cancel session")
 
         # Inputs
         if app.event_with('q'):
             flag = True
-            # ! Disabl Keyboard?
 
         # testing line
-        print(time_running.seconds,interval_time*60)
+        # print(time_running.seconds,interval_time*60)
         sleep(0.075)
 
 
