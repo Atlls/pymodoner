@@ -2,7 +2,7 @@
 
 import ui
 
-PROGRAM_VERSION = '0.0.4.5.1'
+PROGRAM_VERSION = '0.1'
 
 def run():
     menu()

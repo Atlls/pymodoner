@@ -8,7 +8,7 @@ def menu():
 
     while True:
 
-        working, warning, shortbreak, longbreak \
+        working, warning, shortbreak, longbreak, sessions \
         = configs["pomos"]["classic"].values()
 
         ui.clear()
@@ -16,6 +16,7 @@ def menu():
         ui.print_br()
         ui.print_position('Intervals','center')
         ui.print_position('Working : '+str(working)+' Minutes  ','right')
+        ui.print_position('Working Sessions : '+str(sessions)+' Times  ','right')
         ui.print_position('Warning : '+str(warning)+' Minutes  ','right')
         ui.print_position('Break : '+str(shortbreak)+' Minutes  ','right')
         ui.print_position('Long Break : '+str(longbreak)+' Minutes  ','right')
@@ -23,7 +24,6 @@ def menu():
         print(" s. to Start session")
         print(" c. to Configure the intervals")
         print(" q. to Back main menu ")
-        # Another input to get all trash from start_count?
         option = input("  > ")
 
         if   'q' in option:
@@ -33,7 +33,6 @@ def menu():
         elif 'c' in option:
             config_menu(configs)
 
-# ui?
 def config_menu(configs):
 
     configs_classic = configs["pomos"]["classic"]
@@ -44,7 +43,8 @@ def config_menu(configs):
         ui.print_position('Classic Mode Pomodoro Timer: Intervals Configuration','center')
         ui.print_br()
         print(' '+config_name.capitalize() + " time")
-        print(" Current is:", configs_classic[config_name],"minutes")
+        print(" Current is:", configs_classic[config_name],
+              "Minutes" if config_name != "sessions" else "Times")
         ui.print_br()
         print(" number. to Set minutes")
         print(" Enter.  to Skip")
@@ -56,93 +56,101 @@ def config_menu(configs):
     app.write_json(configs)
 
 def run_sequense(configs):
-    working, warning, shortbreak, longbreak \
+    working, warning, shortbreak, longbreak, sessions\
     = configs["pomos"]["classic"].items()
 
-    start_count(working)
+    end = False
+    i = 0
+    sessions = sessions[1]
 
-    ui.print_clear_missings_inputs()
+    # Main cicle
+    while not end:
 
-def start_count(interval,warning=0):
+        # Working <-> Short Brack Session cicle
+        while sessions > i and not end:
+
+            (end,time_done) = start_count_post(working,"Break")
+            ui.print_clear_missings_inputs()
+
+            if not end:
+                end = start_count_normal(shortbreak,\
+                "Working" if sessions > i+1 else "Long Break")
+                print(sessions-1,i)
+                ui.print_clear_missings_inputs()
+            i += 1
+
+        if not end:
+            end = start_count_normal(longbreak,"working")
+            ui.print_clear_missings_inputs()
+
+def start_count_post(interval,next_event):
     import datetime
     from time import sleep
 
-    name_time, interval_time = interval
+    name, interval_time = interval
     time_now =  datetime.datetime.now()
     time_finish = time_now + datetime.timedelta(minutes=interval_time)
 
-    flag = False
-    while not flag and datetime.datetime.now() < time_finish:
+    end = False
+    while not end and datetime.datetime.now() < time_finish:
 
-        # Time manipuling
+        # Time handling
         time_running = time_finish - datetime.datetime.now()
         minutes = str(time_running)[2:7]
-        porcentage_bar = (time_running.seconds+1) / (interval_time * 60) * 100
+        bar_index = (time_running.seconds+1) / (interval_time * 60) * 100
 
         # Outputs
-        ui.clear()
-        ui.print_position('Classic Mode Pomodoro Timer: Running Session','center')
-        ui.print_br()
-        print('\n')
-        print(" in", name_time.capitalize(),"time...")
-        ui.print_position("- "+minutes+" -",'center')
-        ui.print_position(ui.get_bar(20,int(porcentage_bar)),'center')
-        print('\n')
-        ui.print_br()
+        ui.print_counting(name,minutes,bar_index)
         print(" space. to Pause the timer")
         print(" a. to Append 2 minutes at the timer")
-        print(" n. to Go to","*place holder*")
+        print(" n. to Go to",next_event)
         print(" q. to Cancel session")
 
         # Inputs
         if app.event_with('q'):
-            flag = True
+            end = True
+        elif app.event_with('n'):
+            break
+        #elif ...
 
         # testing line
         # print(time_running.seconds,interval_time*60)
-        sleep(0.075)
+        sleep(0.06)
 
+    time_done = 0 # Place Holder...
+    return (end,time_done)
 
-# COMMING TO DELETE #
-def start_count_old(interval,warning = 0):
-    import keyboard # Requiere sudo
-    from datetime import timedelta
-    name_time, interval_time = interval
+def start_count_normal(interval,next_event):
+    import datetime
+    from time import sleep
 
-    time_finish = timedelta(minutes=interval_time)
-    time_running = time_finish
+    name, interval_time = interval
+    time_now =  datetime.datetime.now()
+    time_finish = time_now + datetime.timedelta(minutes=interval_time)
 
-    cancel = False
+    end = False
+    while not end and datetime.datetime.now() < time_finish:
 
-    ui.clear()
-
-    while  time_running.total_seconds() > 0 and not cancel:
-
-        sleep(0.1)
-
-        ui.clear()
-        time_running -= timedelta(seconds=1)
-
-        ui.print_position('Classic Mode Pomodoro Timer: Running Session','center')
-        ui.print_br()
-        print('\n')
-
-        print(" in", name_time,"time...")
+        # Time handling
+        time_running = time_finish - datetime.datetime.now()
         minutes = str(time_running)[2:7]
-        ui.print_position("- "+minutes+" -",'center')
-        porcentage_bar = (time_running.seconds+1) / time_finish.seconds * 100
-        #print(time_running.seconds,time_finish.seconds)
-        ui.print_position(ui.get_bar(20,int(porcentage_bar)),'center')
+        bar_index = (time_running.seconds+1) / (interval_time * 60) * 100
 
-        print('\n')
-        ui.print_br()
-        print(" q. to Cancel session")
-        print(" a. to Put 5 minutes more")
+        # Outputs
+        ui.print_counting(name,minutes,bar_index)
         print(" space. to Pause the timer")
+        print(" n. to Go to",next_event)
+        print(" q. to Cancel session")
 
-        if keyboard.is_pressed('q'):
-            cancel = True
-            # ! Disabl Keyboard?
+        # Inputs
+        if app.event_with('q'):
+            end = True
+        elif app.event_with('n'):
+            break
+        #elif ...
 
-        # Clear buffer
+        # testing line
+        # print(time_running.seconds,interval_time*60)
+        sleep(0.06)
 
+    return end

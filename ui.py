@@ -37,6 +37,17 @@ def get_input_number():
     else:
         return 0
 
+def print_counting(name,minutes,bar_index):
+    clear()
+    print_position('Classic Mode Pomodoro Timer: Running Session','center')
+    print_br()
+    print('\n')
+    print(" in", name.capitalize(),"time...")
+    print_position("- "+minutes+" -",'center')
+    print_position(get_bar(20,int(bar_index)),'center')
+    print('\n')
+    print_br()
+
 def print_position(msg,position = 'left'):
     """ Print a message by a position given. The wight of aplication es 80x15"""
     space = ' '
